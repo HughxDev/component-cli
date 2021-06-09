@@ -1,0 +1,26 @@
+{
+  "name": "@hughx/component-cli",
+  "version": "0.0.1",
+  "description": "Perform CRUD operations on components. Framework-agnostic.",
+  "main": "component-cli.js",
+  "bin": {
+    "component": "component-cli.js"
+  },
+  "repository": "git@github.com:HughxDev/component-cli.git",
+  "author": "Hugh Guiney",
+  "license": "BlueOak-1.0.0",
+  "private": false,
+  "dependencies": {
+    "change-case": "^4.1.2",
+    "ncp": "^2.0.0",
+    "replace-in-file": "^6.2.0",
+    "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.28.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-hughx": "^0.0.4",
+    "eslint-plugin-import": "^2.23.4",
+    "npm-minify": "^0.0.4"
+  }
+}
