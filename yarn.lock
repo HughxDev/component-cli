@@ -1073,10 +1073,10 @@ normalize-package-data@^2.3.2:
     semver "2 || 3 || 4 || 5"
     validate-npm-package-license "^3.0.1"
 
-npm-minify@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/npm-minify/-/npm-minify-0.0.4.tgz#fbc762c1b0be0fd4620565e676933f16f77a9d0e"
-  integrity sha512-VO9O3+/apfNUV/qPh4zh0ECuGB2/CJPtSOyGpTftCRh4qM7aalpBkEcluaMiPeg22rhK9bzjJD1Koh8phyhszg==
+npm-minify@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/npm-minify/-/npm-minify-0.0.5.tgz#4a0535c6bd58251aa9b36e61b23a8b3f9b3ee7ac"
+  integrity sha512-ND4L9bFk/ueDZUaCY2vlvvUM27P7XfSRYfg+DXHcvmaBkSP0d+TLcvcG7Ek4nozfZe2hhhGLl2IfMGfhoXwgmQ==
   dependencies:
     make-dir "^3.0.0"
     recursive-copy "^2.0.10"
