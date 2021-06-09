@@ -1,4 +1,4 @@
-<p align="center"><img src="https://raw.githubusercontent.com/hguiney/component-cli/master/component-cli.svg?sanitize=true" width="150" alt="logo" /></p>
+<p align="center"><img src="https://raw.githubusercontent.com/HughxDev/component-cli/master/component-cli-logo.svg?sanitize=true" width="150" alt="logo" /></p>
 
 <h1 align="center">Component CLI</h1>
 
