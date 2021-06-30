@@ -15,13 +15,13 @@
 Per-project:
 
 ```zsh
-yarn add -D component-cli
+yarn add -D @hughx/component-cli
 ```
 
 Global:
 
 ```zsh
-yarn global add component-cli
+yarn global add @hughx/component-cli
 ```
 
 Then, in your project directory:
