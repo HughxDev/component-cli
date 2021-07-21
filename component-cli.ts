@@ -1,21 +1,18 @@
 #!/usr/bin/env node
 
-const fs = require( 'fs' );
-const { ncp } = require( 'ncp' );
-const replace = require( 'replace-in-file' );
-const path = require( 'path' );
-const rimraf = require( 'rimraf' );
-const { slugify, componentCase } = require( './strings' );
+import fs = require( 'fs' );
+import { ncp } from 'ncp';
+import { replaceInFile as replace, ReplaceInFileConfig } from 'replace-in-file';
+import path = require( 'path' );
+import rimraf = require( 'rimraf' );
+import { slugify, componentCase } from './strings';
 
 ncp.limit = 16;
 
 const templateDirectory = '_templates/components';
 const componentDirectory = 'src/components';
 
-function addComponent( componentName, subcomponentName, recursionLevel = 1 ) {
-  componentName = ( componentName || process.argv.slice( 3 )[0] );
-  subcomponentName = ( subcomponentName || '' );
-
+function addComponent( componentName = process.argv.slice( 3 )[0], subcomponentName = '', recursionLevel = 1 ) {
   let subcomponentFullName;
 
   // If we have an element-level component i.e. `Component/Subcomponent`:
@@ -33,8 +30,8 @@ function addComponent( componentName, subcomponentName, recursionLevel = 1 ) {
     }
   }
 
-  const hasSubcomponent = ( ( recursionLevel === 1 ) && ( subcomponentName.length > 0 ) );
-  const isSubcomponent = ( ( recursionLevel > 1 ) && ( subcomponentName.length > 0 ) );
+  const hasSubcomponent = recursionLevel === 1 && subcomponentName.length > 0;
+  const isSubcomponent = recursionLevel > 1 && subcomponentName.length > 0;
 
   const targetDirectoryBase = `${componentDirectory}/${componentName}`;
   let targetDirectory;
@@ -45,12 +42,10 @@ function addComponent( componentName, subcomponentName, recursionLevel = 1 ) {
     targetDirectory = targetDirectoryBase;
   }
 
-  const replaceOptions = {
-    "files": [
-      `${targetDirectory}/**.js`,
-      `${targetDirectory}/**.scss`,
-    ],
+  const replaceOptions: ReplaceInFileConfig = {
+    "files": [`${targetDirectory}/**.js`, `${targetDirectory}/**.scss`],
     "from": [/\bComponent\b/g, /(?<!["'`])\bcomponent(?<!["'`])\b(?!:)/g],
+    "to": undefined,
   };
   if ( isSubcomponent ) {
     replaceOptions.to = [subcomponentFullName, `${slugify( componentName )}__${slugify( subcomponentName )}`];
@@ -77,18 +72,21 @@ function addComponent( componentName, subcomponentName, recursionLevel = 1 ) {
     targetDirectoryExists = false;
   }
 
-  return (
-    Promise.resolve()
-      .then( () => { // eslint-disable-line consistent-return
-        if ( targetDirectoryExists && ( recursionLevel === 1 ) ) {
-          if ( hasSubcomponent ) {
-            return addComponent( componentName, subcomponentName, 2 );
-          }
-
-          throw new Error( `Component already exists: ${componentName} @ ${targetDirectory}/` );
+  return Promise.resolve()
+    .then( () => {
+      // eslint-disable-line consistent-return
+      if ( targetDirectoryExists && recursionLevel === 1 ) {
+        if ( hasSubcomponent ) {
+          return addComponent( componentName, subcomponentName, 2 );
         }
-      } )
-      .then( () => new Promise( ( resolve, reject ) => {
+
+        throw new Error( `Component already exists: ${componentName} @ ${targetDirectory}/` );
+      }
+
+      return null;
+    } )
+    .then(
+      () => new Promise( ( resolve, reject ) => {
         if ( !targetDirectoryExists ) {
           ncp(
             // Source
@@ -114,7 +112,9 @@ function addComponent( componentName, subcomponentName, recursionLevel = 1 ) {
                 reject( ncpError );
               }
 
-              const successMessage = `Component created: ${( isSubcomponent || hasSubcomponent ) ? subcomponentFullName : componentName} @ ${targetDirectory}/`;
+              const successMessage = `Component created: ${
+                isSubcomponent || hasSubcomponent ? subcomponentFullName : componentName
+              } @ ${targetDirectory}/`;
 
               replace( replaceOptions )
                 .then( () => {
@@ -135,8 +135,8 @@ function addComponent( componentName, subcomponentName, recursionLevel = 1 ) {
             }, // ncp callback
           ); // ncp
         }
-      } ) ) // then
-  ); // return
+      } ),
+    ); // then // return
 }
 
 function renameComponent() {
@@ -174,7 +174,7 @@ function renameComponent() {
     existingComponentNameRegex = new RegExp( `\\b${existingBlockComponentName}\\b`, 'g' );
     existingClassNameRegex = new RegExp( `\\b${slugify( existingBlockComponentName )}\\b`, 'g' );
 
-  // Existing component is element-level (subcomponent):
+    // Existing component is element-level (subcomponent):
   } else {
     isSubcomponent = true;
 
@@ -190,7 +190,7 @@ function renameComponent() {
     existingClassNameRegex = new RegExp( `\\b${slugify( existingBlockComponentName )}__${slugify( existingElementComponentShortName )}\\b`, 'g' );
   }
 
-  const existingComponentName = ( existingElementComponentName || existingBlockComponentName );
+  const existingComponentName = existingElementComponentName || existingBlockComponentName;
 
   // New component name is block-level:
   if ( newComponentId.indexOf( '/' ) === -1 ) {
@@ -204,7 +204,7 @@ function renameComponent() {
     targetDirectory = targetDirectoryBase;
     newComponentClassName = slugify( newBlockComponentName );
 
-  // New component name is element-level (subcomponent):
+    // New component name is element-level (subcomponent):
   } else {
     isSubcomponent = true;
 
@@ -220,27 +220,24 @@ function renameComponent() {
     newComponentClassName = `${slugify( newBlockComponentName )}__${slugify( newElementComponentShortName )}`;
   }
 
-  const newComponentName = ( newElementComponentName || newBlockComponentName );
+  const newComponentName = newElementComponentName || newBlockComponentName;
 
   const replaceOptions = {
-    "files": [
-      `${sourceDirectory}/**.js`,
-      `${sourceDirectory}/**.scss`,
-    ],
+    "files": [`${sourceDirectory}/**.js`, `${sourceDirectory}/**.scss`],
     "from": [existingComponentNameRegex, existingClassNameRegex],
     "to": [newComponentName, newComponentClassName],
   };
 
-  return (
-    replace( replaceOptions )
-      .then( () => {
-        if ( !fs.existsSync( targetDirectoryBase ) && isSubcomponent ) {
-          return addComponent( newBlockComponentName );
-        }
+  return replace( replaceOptions )
+    .then( () => {
+      if ( !fs.existsSync( targetDirectoryBase ) && isSubcomponent ) {
+        return addComponent( newBlockComponentName );
+      }
 
-        return true;
-      } )
-      .then( () => new Promise( ( resolve, reject ) => {
+      return true;
+    } )
+    .then(
+      () => new Promise( ( resolve, reject ) => {
         fs.rename( sourceDirectory, targetDirectory, ( renameDirError ) => {
           if ( renameDirError ) {
             console.error( `fs.rename( sourceDirectory = "${sourceDirectory}", targetDirectory = "${targetDirectory}" ) failed:` );
@@ -267,12 +264,12 @@ function renameComponent() {
 
             resolve(
               `Component renamed: ${existingComponentId} → ${newComponentId} @ ${targetDirectory}/`
-                + `\nReferences to ${existingBlockComponentName} in other files must be replaced manually.`,
+                  + `\nReferences to ${existingBlockComponentName} in other files must be replaced manually.`,
             );
           } ); // fs.readdir
         } ); // fs.rename
-      } ) ) // then
-  );
+      } ),
+    ); // then
 }
 
 function removeComponent() {
@@ -286,7 +283,7 @@ function removeComponent() {
   if ( componentId.indexOf( '/' ) === -1 ) {
     componentName = componentCase( componentId );
     targetDirectory = `${componentDirectory}/${componentName}`;
-  // Element-level component:
+    // Element-level component:
   } else {
     isSubcomponent = true;
     const componentIdParts = componentId.split( '/' );
@@ -296,7 +293,7 @@ function removeComponent() {
     targetDirectory = `${componentDirectory}/${componentName}/_${subcomponentFullName}`;
   }
 
-  const componentOrSubcomponentFullName = ( isSubcomponent ? subcomponentFullName : componentName );
+  const componentOrSubcomponentFullName = isSubcomponent ? subcomponentFullName : componentName;
 
   return new Promise( ( resolve, reject ) => {
     rimraf.sync( targetDirectory );
@@ -309,7 +306,7 @@ function removeComponent() {
 
       resolve(
         `Component deleted: ${componentOrSubcomponentFullName}`
-        + `\nReferences to ${componentOrSubcomponentFullName} in other files must be removed manually.`,
+          + `\nReferences to ${componentOrSubcomponentFullName} in other files must be removed manually.`,
       );
     } );
   } );

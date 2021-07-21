@@ -1,9 +1,6 @@
 module.exports = {
   "extends": [
-    "hughx/node",
+    "hughx-ts/node",
   ],
-  "parserOptions": {
-    "ecmaVersion": 2018,
-  },
-  "ignorePatterns": ['_templates/'],
+  "ignorePatterns": ["_templates/"],
 };
