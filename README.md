@@ -26,8 +26,8 @@ yarn global add @hughx/component-cli
 
 Then, in your project directory:
 
-```zsh
-mkdir -p _templates/components/Component/
+```shell
+mkdir -p _templates/components/#Component#/
 ```
 
 Currently the script outputs to `src/components`, so you’ll need to also create that directory if it doesn’t already exist. A future version may make this path configurable.
