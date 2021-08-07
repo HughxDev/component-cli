@@ -4,6 +4,7 @@ export const componentDirectory: string = 'src/components';
 export function getFileGlobs( directory: string = '.' ): Array<string> {
   return [
     `${directory}/**/*.js`,
+    `${directory}/**/*.json`,
     `${directory}/**/*.jsx`,
     `${directory}/**/*.ts`,
     `${directory}/**/*.tsx`,

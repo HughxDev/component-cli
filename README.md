@@ -70,6 +70,7 @@ Then, when you run the CLI, it will copy all files and replace all template vari
 Currently, the CLI only makes replacements for the following file extensions:
 
 - `.js`
+- `.json`
 - `.jsx`
 - `.ts`
 - `.tsx`
