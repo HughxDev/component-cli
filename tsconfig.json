@@ -1,0 +1,3 @@
+{
+  "extends": "@hughx/tsconfig/node.json"
+}
