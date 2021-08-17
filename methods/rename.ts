@@ -16,12 +16,14 @@ function renameComponent( verboseMode: boolean ) {
   let existingElementComponentName: string;
 
   let existingComponentNameRegex: RegExp;
+  let existingComponentShortNameRegex: RegExp;
   let existingClassNameRegex: RegExp;
 
   let newBlockComponentName: string;
   let newElementComponentShortName: string;
   let newElementComponentName: string;
 
+  let newComponentShortName: string;
   let newComponentClassName: string;
 
   let sourceDirectory: string;
@@ -36,11 +38,12 @@ function renameComponent( verboseMode: boolean ) {
 
     // Naming:
     existingBlockComponentName = componentCase( existingComponentId );
+    existingComponentNameRegex = new RegExp( `${existingBlockComponentName}`, 'g' );
+    existingComponentShortNameRegex = existingComponentNameRegex;
+    existingClassNameRegex = new RegExp( `${slugify( existingBlockComponentName )}`, 'g' );
 
     // Path:
     sourceDirectory = `${componentDirectory}/${existingBlockComponentName}`;
-    existingComponentNameRegex = new RegExp( `${existingBlockComponentName}`, 'g' );
-    existingClassNameRegex = new RegExp( `${slugify( existingBlockComponentName )}`, 'g' );
 
     // Existing component is element-level (subcomponent):
   } else {
@@ -51,11 +54,12 @@ function renameComponent( verboseMode: boolean ) {
     existingBlockComponentName = componentCase( existingComponentIdParts[0] );
     existingElementComponentShortName = componentCase( existingComponentIdParts[1] );
     existingElementComponentName = `${existingBlockComponentName}${existingElementComponentShortName}`;
+    existingComponentNameRegex = new RegExp( `${existingElementComponentName}`, 'g' );
+    existingComponentShortNameRegex = new RegExp( `${existingElementComponentShortName}`, 'g' );
+    existingClassNameRegex = new RegExp( `${slugify( existingBlockComponentName )}(__|-)${slugify( existingElementComponentShortName )}`, 'g' );
 
     // Path:
     sourceDirectory = `${componentDirectory}/${existingBlockComponentName}/_${existingElementComponentName}`;
-    existingComponentNameRegex = new RegExp( `${existingElementComponentName}`, 'g' );
-    existingClassNameRegex = new RegExp( `${slugify( existingBlockComponentName )}__${slugify( existingElementComponentShortName )}`, 'g' );
   }
 
   const existingComponentName = existingElementComponentName || existingBlockComponentName;
@@ -66,11 +70,12 @@ function renameComponent( verboseMode: boolean ) {
 
     // Naming:
     newBlockComponentName = componentCase( newComponentId );
+    newComponentClassName = slugify( newBlockComponentName );
+    newComponentShortName = newBlockComponentName;
 
     // Path:
     targetDirectoryBase = `${componentDirectory}/${newBlockComponentName}`;
     targetDirectory = targetDirectoryBase;
-    newComponentClassName = slugify( newBlockComponentName );
 
     // New component name is element-level (subcomponent):
   } else {
@@ -81,22 +86,31 @@ function renameComponent( verboseMode: boolean ) {
     newBlockComponentName = componentCase( newComponentIdParts[0] );
     newElementComponentShortName = componentCase( newComponentIdParts[1] );
     newElementComponentName = `${newBlockComponentName}${newElementComponentShortName}`;
+    newComponentShortName = newElementComponentShortName;
 
     // Path:
     targetDirectoryBase = `${componentDirectory}/${newBlockComponentName}`;
     targetDirectory = `${targetDirectoryBase}/_${newElementComponentName}`;
-    newComponentClassName = `${slugify( newBlockComponentName )}__${slugify( newElementComponentShortName )}`;
+    newComponentClassName = `${slugify( newBlockComponentName )}$1${slugify( newElementComponentShortName )}`;
   }
 
   const newComponentName = newElementComponentName || newBlockComponentName;
   const replaceOptions: ReplaceOptions = {
     "files": getFileGlobs( sourceDirectory ),
-    "from": [existingComponentNameRegex, existingClassNameRegex],
-    "to": [newComponentName, newComponentClassName],
+    "from": [
+      existingComponentNameRegex,
+      existingComponentShortNameRegex,
+      existingClassNameRegex,
+    ],
+    "to": [
+      newComponentName,
+      newComponentShortName,
+      newComponentClassName,
+    ],
     "allowEmptyPaths": true,
   };
   const successMessage = `Component renamed: ${existingComponentId} → ${newComponentId} @ ${targetDirectory}/`
-    + `\nReferences to ${existingBlockComponentName} in other files must be replaced manually.`;
+    + `\nReferences to ${existingComponentId} in other files must be replaced manually.`;
 
   return replace( replaceOptions )
     .then( () => {

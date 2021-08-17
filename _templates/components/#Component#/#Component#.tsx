@@ -1,18 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-// import {} from './methods.js'
 
 import './#Component#.scss';
 
-function $Component$( props ) {
-  return (
-    <div data-testid="my-#component#" className={ `my-#component#${props.className ? ` ${props.className}` : ''}` }>
-      { props.children }
-    </div>
-  );
+export interface $ComponentBare$Props {
+  // Uncomment this if your component requires children
+  // children: ReactNode;
+
+  className?: string;
 }
 
-$Component$.displayName = '#Component#';
+export const $Component$ = ( props: $ComponentBare$Props ) => (
+  <div data-testid="my-#component#" className={ `my-#component:block#${props.className ? ` ${props.className}` : ''}` }>
+    { /* Implement me */ }
+  </div>
+);
 
-export default $Component$;
+$Component$.displayName = '#Component#';

@@ -16,22 +16,32 @@ function addComponent(
   subcomponentName: string = '',
   recursionLevel: number = 1,
 ): Promise<void | string | boolean> {
+  let subcomponentBareName: string;
   let subcomponentFullName: string;
 
   // If we have an element-level component i.e. `Component/Subcomponent`:
   if ( subcomponentName ) {
-    subcomponentFullName = `_${componentName}${subcomponentName}`;
+    subcomponentBareName = `${componentName}${subcomponentName}`;
+    subcomponentFullName = `_${subcomponentBareName}`;
   } else {
     if ( componentName.indexOf( '/' ) !== -1 ) {
       const componentNameParts = componentName.split( '/' );
       componentName = componentCase( componentNameParts[0] );
       subcomponentName = componentCase( componentNameParts[1] );
-      subcomponentFullName = `_${componentName}${subcomponentName}`;
+      subcomponentBareName = `${componentName}${subcomponentName}`;
+      subcomponentFullName = `_${subcomponentBareName}`;
     } else {
       componentName = componentCase( componentName );
-      subcomponentFullName = `_${subcomponentName}`;
+      subcomponentBareName = subcomponentName;
+      subcomponentFullName = `_${subcomponentBareName}`;
     }
   }
+
+  const componentClassName = slugify( componentName );
+  const subcomponentClassName = slugify( subcomponentName );
+
+  const subcomponentFullClassName = `${componentClassName}__${subcomponentClassName}`;
+  const subcomponentNewBlockClassName = `${componentClassName}-${subcomponentClassName}`;
 
   const hasSubcomponent = recursionLevel === 1 && subcomponentName.length > 0;
   const isSubcomponent = recursionLevel > 1 && subcomponentName.length > 0;
@@ -48,16 +58,36 @@ function addComponent(
   const replaceOptions: ReplaceOptions = {
     "files": getFileGlobs( targetDirectory ),
     "from": [
-      /([#$])Component\1/g,
-      /(\\?[#$])component\1/g,
+      /([#$])Component\1/g, // #Component# → Widget, _WidgetSubwidget
+      /([#$])ComponentBare\1/g, // #ComponentBare# → Widget, WidgetSubwidget
+      /([#$])ComponentShort\1/g, // #ComponentShort# → Widget, Subwidget
+      /(\\?[#$])component\1/g, // #component# → widget, widget__subwidget
+      /(\\?[#$])component:block\1/g, // #component:block# → widget, widget-subwidget
     ],
     "to": undefined,
     "allowEmptyPaths": true,
   };
   if ( isSubcomponent ) {
-    replaceOptions.to = [subcomponentFullName, `${slugify( componentName )}__${slugify( subcomponentName )}`];
+    replaceOptions.to = [
+      subcomponentFullName, // #Component#
+      subcomponentBareName, // #ComponentBare#
+      subcomponentName, // #ComponentShort#
+      subcomponentFullClassName, // #component#
+      subcomponentNewBlockClassName, // #component:block#
+    ];
   } else {
-    replaceOptions.to = [componentName, `${slugify( componentName )}`];
+    replaceOptions.to = [
+      componentName,
+      componentName,
+      componentName,
+      componentClassName,
+      componentClassName,
+    ];
+  }
+
+  if ( replaceOptions.from.length !== replaceOptions.to.length ) {
+    console.error( `replaceOptions.from and replaceOptions.to must match in length.` );
+    process.exit( 1 );
   }
 
   // let targetDirectoryBaseExists;
@@ -107,7 +137,15 @@ function addComponent(
               // @ts-ignore Missing in declaration file
               "rename": function rename( target: string ) {
                 const pathInfo = path.parse( target );
-                const filename = pathInfo.base.replace( replaceOptions.from[0], replaceOptions.to[0] );
+                let filename = pathInfo.base;
+
+                for ( let index = 0; index < replaceOptions.from.length; index++ ) {
+                  const from = replaceOptions.from[index];
+                  const to = replaceOptions.to[index];
+
+                  filename = filename.replace( from, to );
+                }
+
                 const resolution = path.resolve( targetDirectory, filename );
 
                 return resolution;

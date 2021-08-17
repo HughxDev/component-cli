@@ -36,7 +36,7 @@ Currently the script outputs to `src/components`, so you’ll need to also creat
 
 Component CLI assumes (and enforces) that your components are organized in a modular fashion, with each component having its own directory. Beyond that, the actual file structure, frameworks, preprocessors, etc. are up to you.
 
-In your file names and in your code, use the template variables `#component#` or `#Component#`, and the corresponding BEM- or Pascal-cased identifiers will be filled in upon execution of `component add`. You may also use the dollar sign character (`$`) instead of the hash character (`#`) in order to preserve syntax highlighting in JavaScript/TypeScript. Similarly, you may escape the delimiters to preserve syntax highlighting in CSS, e.g. `.my-\#component\# {}`.
+In your file names and in your code, use the template variables `#component#` or `#Component#`, and the corresponding BEM- or Pascal-cased identifiers will be filled in upon execution of `component add`. You may also use the dollar sign character (`$`) instead of the hash character (`#`) in order to preserve syntax highlighting in JavaScript/TypeScript. Similarly, you may escape the delimiters to preserve syntax highlighting in CSS, e.g. `.my-\#component\# {}`. See also the [full list of template variables](#template-variables).
 
 Here is how a typical component template might look:
 
@@ -78,8 +78,26 @@ Currently, the CLI only makes replacements for the following file extensions:
 - `.sass`
 - `.less`
 - `.styl`
+- `.graphql`
+- `.gql`
 
 For more detail on usage, please see the API section.
+
+### Template Variables
+
+All hash symbols (`#`) can be substituted with dollar signs (`$`) for JavaScript compatibility.
+
+The BEM variations can also have their delimiters escaped with a single backslash (`\`) for CSS compatibility.
+
+| Variables           | Description                                          | Sample Output                                                                    |
+| ------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `#Component#`       | Pascal Case, leading underscore for subcomponents    | <samp><code>Widget</code></samp>, <samp><code>_WidgetSubwidget</code></samp>     |
+| `#ComponentBare#`   | Pascal Case, no leading underscore for subcomponents | <samp><code>Widget</code></samp>, <samp><code>WidgetSubwidget</code></samp></dd> |
+| `#ComponentShort#`  | Pascal Case, no parent prefix for subcomponents      | <samp><code>Widget</code></samp>, <samp><code>Subwidget</code></samp>            |
+| `#component#`       | BEM Case, subcomponent as element relative to parent | <samp><code>widget</code></samp>, <samp><code>widget__subwidget</code></samp>    |
+| `#component:block#` | BEM Case, subcomponent as new block                  | <samp><code>widget</code></samp>, <samp><code>widget-subwidget</code></samp>     |
+
+</dl>
 
 ## API
 
@@ -91,6 +109,7 @@ If you installed the package locally, you will invoke with `yarn component` (sho
 
 ```zsh
 component add Widget
+# Aliases: add, create, new
 ```
 
 This copies everything under `_templates/components/#Component#` to `src/components/Widget` and does a BEM-case replacement for `#component#`/`$component$`, and a Pascal-case replacement for `#Component#`/`$Component$`, replacing them with your new component’s name. For instance, this `index.js` template:
@@ -188,6 +207,7 @@ These naming conventions are not currently configurable, but may be in a future 
 
 ```zsh
 component rename Widget Doohickey
+# Aliases: rename, rn, mv, move
 ```
 
 This renames the directory and does a find-and-replace on its contents, as well as the contents of any nested directories one level deep (i.e., non-recursively).
@@ -196,4 +216,5 @@ This renames the directory and does a find-and-replace on its contents, as well 
 
 ```zsh
 component remove Doohickey
+# Aliases: delete, del, destroy, remove, rm
 ```
