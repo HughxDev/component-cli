@@ -36,7 +36,7 @@ Currently the script outputs to `src/components`, so you’ll need to also creat
 
 Component CLI assumes (and enforces) that your components are organized in a modular fashion, with each component having its own directory. Beyond that, the actual file structure, frameworks, preprocessors, etc. are up to you.
 
-In your file names and in your code, use the template variables `#component#` or `#Component#`, and the corresponding BEM- or Pascal-cased identifiers will be filled in upon execution of `component add`. You may also use the dollar sign character (`$`) instead of the hash character (`#`) in order to preserve syntax highlighting in JavaScript/TypeScript. Similarly, you may escape the delimiters to preserve syntax highlighting in CSS, e.g. `.my-\#component\# {}`. See also the [full list of template variables](#template-variables).
+In your file names and in your code, use the template variables `#component#` or `#Component#`, and the corresponding BEM- or Pascal-cased identifiers will be filled in upon execution of `component add`. See also the [full list of template variables](#template-variables).
 
 Here is how a typical component template might look:
 
