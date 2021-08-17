@@ -12,5 +12,7 @@ export function getFileGlobs( directory: string = '.' ): Array<string> {
     `${directory}/**/*.sass`,
     `${directory}/**/*.less`,
     `${directory}/**/*.styl`,
+    `${directory}/**/*.graphql`,
+    `${directory}/**/*.gql`,
   ];
 }
