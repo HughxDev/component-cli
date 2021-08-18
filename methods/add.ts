@@ -6,7 +6,7 @@ import { ncp } from 'ncp';
 
 import { ReplaceOptions } from '../interfaces';
 import { templateDirectory, componentDirectory, getFileGlobs } from '../settings';
-import { slugify, componentCase } from '../strings';
+import { slugify, componentCase, constantCase } from '../strings';
 
 // @ts-ignore Missing in declaration file
 ncp.limit = 16;
@@ -40,6 +40,11 @@ function addComponent(
   const componentClassName = slugify( componentName );
   const subcomponentClassName = slugify( subcomponentName );
 
+  const componentConstantName = constantCase( componentName );
+  const subcomponentConstantName = constantCase( subcomponentName );
+  const subcomponentFullConstantName = `_${constantCase( subcomponentFullName )}`;
+  const subcomponentBareConstantName = constantCase( subcomponentBareName );
+
   const subcomponentFullClassName = `${componentClassName}__${subcomponentClassName}`;
   const subcomponentNewBlockClassName = `${componentClassName}-${subcomponentClassName}`;
 
@@ -59,8 +64,11 @@ function addComponent(
     "files": getFileGlobs( targetDirectory ),
     "from": [
       /([#$])Component\1/g, // #Component# → Widget, _WidgetSubwidget
+      /([#$])COMPONENT\1/g, // #COMPONENT# → WIDGET, _WIDGET_SUBWIDGET
       /([#$])ComponentBare\1/g, // #ComponentBare# → Widget, WidgetSubwidget
+      /([#$])COMPONENT_BARE\1/g, // #COMPONENT_BARE# → WIDGET, WIDGET_SUBWIDGET
       /([#$])ComponentShort\1/g, // #ComponentShort# → Widget, Subwidget
+      /([#$])COMPONENT_SHORT\1/g, // #COMPONENT_SHORT# → WIDGET, SUBWIDGET
       /(\\?[#$])component\1/g, // #component# → widget, widget__subwidget
       /(\\?[#$])component:block\1/g, // #component:block# → widget, widget-subwidget
     ],
@@ -70,18 +78,24 @@ function addComponent(
   if ( isSubcomponent ) {
     replaceOptions.to = [
       subcomponentFullName, // #Component#
+      subcomponentFullConstantName, // #COMPONENT#
       subcomponentBareName, // #ComponentBare#
+      subcomponentBareConstantName,
       subcomponentName, // #ComponentShort#
+      subcomponentConstantName, // #COMPONENT_SHORT#
       subcomponentFullClassName, // #component#
       subcomponentNewBlockClassName, // #component:block#
     ];
   } else {
     replaceOptions.to = [
-      componentName,
-      componentName,
-      componentName,
-      componentClassName,
-      componentClassName,
+      componentName, // #Component#
+      componentConstantName, // #COMPONENT#
+      componentName, // #ComponentBare#
+      componentConstantName, // #COMPONENT_BARE#
+      componentName, // #ComponentShort#
+      componentConstantName, // #COMPONENT_SHORT#
+      componentClassName, // #component#
+      componentClassName, // #component:block#
     ];
   }
 

@@ -89,13 +89,16 @@ All hash symbols (`#`) can be substituted with dollar signs (`$`) for JavaScript
 
 The BEM variations can also have their delimiters escaped with a single backslash (`\`) for CSS compatibility.
 
-| Variables           | Description                                          | Sample Output                                                                    |
-| ------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `#Component#`       | Pascal Case, leading underscore for subcomponents    | <samp><code>Widget</code></samp>, <samp><code>_WidgetSubwidget</code></samp>     |
-| `#ComponentBare#`   | Pascal Case, no leading underscore for subcomponents | <samp><code>Widget</code></samp>, <samp><code>WidgetSubwidget</code></samp></dd> |
-| `#ComponentShort#`  | Pascal Case, no parent prefix for subcomponents      | <samp><code>Widget</code></samp>, <samp><code>Subwidget</code></samp>            |
-| `#component#`       | BEM Case, subcomponent as element relative to parent | <samp><code>widget</code></samp>, <samp><code>widget__subwidget</code></samp>    |
-| `#component:block#` | BEM Case, subcomponent as new block                  | <samp><code>widget</code></samp>, <samp><code>widget-subwidget</code></samp>     |
+| Variables           | Description                                           | Sample Output                                                                 |
+| ------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `#Component#`       | Pascal Case, leading underscore for subcomponents     | <samp><code>Widget</code></samp>, <samp><code>_WidgetSubwidget</code></samp>  |
+| `#COMPONENT#`       | Constant Case, leading underscore for subcomponents   | <samp><code>WIDGET</code></samp>, <samp><code>_WIDGET_SUBWIDGET</code></samp> |
+| `#ComponentBare#`   | Pascal Case, no leading underscore for subcomponents  | <samp><code>Widget</code></samp>, <samp><code>WidgetSubwidget</code></samp>   |
+| `#COMPONENT_BARE#`  | Constant Case, no leading underscore for subcomponent | <samp><code>WIDGET</code></samp>, <samp><code>WIDGET_SUBWIDGET</code></samp>  |
+| `#ComponentShort#`  | Pascal Case, no parent prefix for subcomponents       | <samp><code>Widget</code></samp>, <samp><code>Subwidget</code></samp>         |
+| `#COMPONENT_SHORT#` | Constant Case, no parent prefix for subcomponents     | <samp><code>WIDGET</code></samp>, <samp><code>SUBWIDGET</code></samp>         |
+| `#component#`       | BEM Case, subcomponent as element relative to parent  | <samp><code>widget</code></samp>, <samp><code>widget__subwidget</code></samp> |
+| `#component:block#` | BEM Case, subcomponent as new block                   | <samp><code>widget</code></samp>, <samp><code>widget-subwidget</code></samp>  |
 
 </dl>
 

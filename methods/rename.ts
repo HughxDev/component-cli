@@ -5,7 +5,7 @@ import path = require( 'path' );
 import { ReplaceOptions } from '../interfaces';
 import addComponent from './add';
 import { componentDirectory, getFileGlobs } from '../settings';
-import { slugify, componentCase } from '../strings';
+import { slugify, componentCase, constantCase } from '../strings';
 
 function renameComponent( verboseMode: boolean ) {
   const existingComponentId: string = process.argv.slice( 3 )[0];
@@ -18,6 +18,8 @@ function renameComponent( verboseMode: boolean ) {
   let existingComponentNameRegex: RegExp;
   let existingComponentShortNameRegex: RegExp;
   let existingClassNameRegex: RegExp;
+  let existingComponentConstantNameRegex: RegExp;
+  let existingComponentConstantShortNameRegex: RegExp;
 
   let newBlockComponentName: string;
   let newElementComponentShortName: string;
@@ -25,6 +27,8 @@ function renameComponent( verboseMode: boolean ) {
 
   let newComponentShortName: string;
   let newComponentClassName: string;
+  let newComponentConstantName: string;
+  let newComponentConstantShortName: string;
 
   let sourceDirectory: string;
   let targetDirectoryBase: string;
@@ -41,6 +45,8 @@ function renameComponent( verboseMode: boolean ) {
     existingComponentNameRegex = new RegExp( `${existingBlockComponentName}`, 'g' );
     existingComponentShortNameRegex = existingComponentNameRegex;
     existingClassNameRegex = new RegExp( `${slugify( existingBlockComponentName )}`, 'g' );
+    existingComponentConstantNameRegex = new RegExp( constantCase( existingBlockComponentName ), 'g' );
+    existingComponentConstantShortNameRegex = existingComponentConstantNameRegex;
 
     // Path:
     sourceDirectory = `${componentDirectory}/${existingBlockComponentName}`;
@@ -57,6 +63,8 @@ function renameComponent( verboseMode: boolean ) {
     existingComponentNameRegex = new RegExp( `${existingElementComponentName}`, 'g' );
     existingComponentShortNameRegex = new RegExp( `${existingElementComponentShortName}`, 'g' );
     existingClassNameRegex = new RegExp( `${slugify( existingBlockComponentName )}(__|-)${slugify( existingElementComponentShortName )}`, 'g' );
+    existingComponentConstantNameRegex = new RegExp( `(_)?${constantCase( `${existingBlockComponentName}_${existingElementComponentShortName}` )}`, 'g' );
+    existingComponentConstantShortNameRegex = new RegExp( constantCase( existingElementComponentShortName ), 'g' );
 
     // Path:
     sourceDirectory = `${componentDirectory}/${existingBlockComponentName}/_${existingElementComponentName}`;
@@ -72,6 +80,8 @@ function renameComponent( verboseMode: boolean ) {
     newBlockComponentName = componentCase( newComponentId );
     newComponentClassName = slugify( newBlockComponentName );
     newComponentShortName = newBlockComponentName;
+    newComponentConstantName = constantCase( newBlockComponentName );
+    newComponentConstantShortName = newComponentConstantName;
 
     // Path:
     targetDirectoryBase = `${componentDirectory}/${newBlockComponentName}`;
@@ -87,11 +97,13 @@ function renameComponent( verboseMode: boolean ) {
     newElementComponentShortName = componentCase( newComponentIdParts[1] );
     newElementComponentName = `${newBlockComponentName}${newElementComponentShortName}`;
     newComponentShortName = newElementComponentShortName;
+    newComponentClassName = `${slugify( newBlockComponentName )}$1${slugify( newElementComponentShortName )}`;
+    newComponentConstantName = `$1${constantCase( `${newBlockComponentName}_${newElementComponentShortName}` )}`;
+    newComponentConstantShortName = constantCase( newElementComponentName );
 
     // Path:
     targetDirectoryBase = `${componentDirectory}/${newBlockComponentName}`;
     targetDirectory = `${targetDirectoryBase}/_${newElementComponentName}`;
-    newComponentClassName = `${slugify( newBlockComponentName )}$1${slugify( newElementComponentShortName )}`;
   }
 
   const newComponentName = newElementComponentName || newBlockComponentName;
@@ -101,11 +113,15 @@ function renameComponent( verboseMode: boolean ) {
       existingComponentNameRegex,
       existingComponentShortNameRegex,
       existingClassNameRegex,
+      existingComponentConstantNameRegex,
+      existingComponentConstantShortNameRegex,
     ],
     "to": [
       newComponentName,
       newComponentShortName,
       newComponentClassName,
+      newComponentConstantName,
+      newComponentConstantShortName,
     ],
     "allowEmptyPaths": true,
   };

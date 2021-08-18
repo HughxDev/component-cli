@@ -1,4 +1,4 @@
-const { snakeCase, pascalCase } = require( 'change-case' );
+const { snakeCase, pascalCase, constantCase } = require( 'change-case' );
 
 function capitalize( text: string ): string {
   return text.charAt( 0 ).toUpperCase() + text.slice( 1 );
@@ -25,5 +25,6 @@ export {
   uncapitalize,
   slugify,
   componentCase,
+  constantCase,
   generateRandomNumberString,
 };
