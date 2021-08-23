@@ -204,7 +204,7 @@ As you can see, the hierarchical relationship between Widget and Gadget is refle
 1. The React display name is `_WidgetGadget`. The leading underscore indicates that the component is “private”, i.e. not meant to be used outside the context of its parent.
 2. The CSS class name is `widget__gadget`. The double underscore indicates that this is a [BEM](http://getbem.com/) element `gadget` belonging to the `widget` block.
 
-These naming conventions are not currently configurable, but may be in a future release.
+You can change the naming conventions applied by using different [template variables](#template-variables).
 
 ### Rename
 
