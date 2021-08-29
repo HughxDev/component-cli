@@ -74,6 +74,7 @@ Currently, the CLI only makes replacements for the following file extensions:
 - `.jsx`
 - `.ts`
 - `.tsx`
+- `.css`
 - `.scss`
 - `.sass`
 - `.less`

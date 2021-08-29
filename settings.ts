@@ -8,6 +8,7 @@ export function getFileGlobs( directory: string = '.' ): Array<string> {
     `${directory}/**/*.jsx`,
     `${directory}/**/*.ts`,
     `${directory}/**/*.tsx`,
+    `${directory}/**/*.css`,
     `${directory}/**/*.scss`,
     `${directory}/**/*.sass`,
     `${directory}/**/*.less`,
