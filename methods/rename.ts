@@ -1,8 +1,7 @@
 import * as fs from 'fs';
-import { replaceInFile as replace } from 'replace-in-file';
+import { replaceInFile, ReplaceInFileConfig } from 'replace-in-file';
 import path = require( 'path' );
 
-import { ReplaceOptions } from '../interfaces';
 import addComponent from './add';
 import { componentDirectory, getFileGlobs } from '../settings';
 import { slugify, componentCase, constantCase } from '../strings';
@@ -107,7 +106,8 @@ function renameComponent( verboseMode: boolean ) {
   }
 
   const newComponentName = newElementComponentName || newBlockComponentName;
-  const replaceOptions: ReplaceOptions = {
+  const replacementWarnings = new Set();
+  const replaceOptions: ReplaceInFileConfig = {
     "files": getFileGlobs( sourceDirectory ),
     "from": [
       existingComponentNameRegex,
@@ -116,19 +116,45 @@ function renameComponent( verboseMode: boolean ) {
       existingComponentConstantNameRegex,
       existingComponentConstantShortNameRegex,
     ],
+    // TODO: convert these to callbacks
     "to": [
       newComponentName,
       newComponentShortName,
-      newComponentClassName,
+      ( match ) => {
+        /*
+          If there is no dash or underscore, the first capture group for existingClassNameRegex won’t be filled.
+          This catches that and makes sure the unmatched $1 doesn’t show up in the replacement.
+        */
+        if ( ( match.indexOf( '-' ) === -1 ) && ( match.indexOf( '__' ) === -1 ) ) {
+          const fallbackNewComponentClassName = newComponentClassName.replace( /\$1(?![0-9])/g, '-' );
+          const alternativeNewComponentClassName = newComponentClassName.replace( /\$1(?![0-9])/g, '__' );
+
+          replacementWarnings.add(
+            `Encountered matching BEM-case string “${match}” that has a nondeterministic template variable mapping:`
+            + ` could be #component# or #component:block#.`
+            + ` As a result, #component:block# has been chosen as a fallback.`
+            + ` If this is not what you want, please manually replace references to “${fallbackNewComponentClassName}” with “${alternativeNewComponentClassName}”.`,
+          );
+
+          return fallbackNewComponentClassName;
+        }
+
+        return newComponentClassName;
+      },
       newComponentConstantName,
       newComponentConstantShortName,
     ],
     "allowEmptyPaths": true,
   };
-  const successMessage = `Component renamed: ${existingComponentId} → ${newComponentId} @ ${targetDirectory}/`
-    + `\nReferences to ${existingComponentId} in other files must be replaced manually.`;
 
-  return replace( replaceOptions )
+  if ( verboseMode ) {
+    console.log( 'replaceOptions', replaceOptions );
+  }
+
+  let successMessage = `${verboseMode ? '\n' : ''}${`Component renamed: ${existingComponentId} → ${newComponentId} @ ${targetDirectory}/`
+    + `\nReferences to ${existingComponentId} in other files must be replaced manually.`}`;
+
+  return replaceInFile( replaceOptions )
     .then( () => {
       if ( !fs.existsSync( targetDirectoryBase ) && isSubcomponent ) {
         return addComponent( newBlockComponentName );
@@ -198,6 +224,10 @@ function renameComponent( verboseMode: boolean ) {
                 }
               } );
             } ); // files.forEach
+
+            if ( replacementWarnings.size ) {
+              successMessage += `\n\n${Array.from( replacementWarnings ).join( '\n\n' )}\n`;
+            }
 
             resolve( successMessage );
           } ); // fs.readdir
