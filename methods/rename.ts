@@ -110,20 +110,28 @@ function renameComponent( verboseMode: boolean ) {
   const replaceOptions: ReplaceInFileConfig = {
     "files": getFileGlobs( sourceDirectory ),
     "from": [
+      // 1:
       existingComponentNameRegex,
+      // 2:
       existingComponentShortNameRegex,
+      // 3:
       existingClassNameRegex,
+      // 4:
       existingComponentConstantNameRegex,
+      // 5:
       existingComponentConstantShortNameRegex,
     ],
     // TODO: convert these to callbacks
     "to": [
+      // 1:
       newComponentName,
+      // 2:
       newComponentShortName,
+      // 3:
       ( match ) => {
         /*
           If there is no dash or underscore, the first capture group for existingClassNameRegex won’t be filled.
-          This catches that and makes sure the unmatched $1 doesn’t show up in the replacement.
+          This catches that and makes sure the unmatched $1 doesn’t show up in the replacement string.
         */
         if ( ( match.indexOf( '-' ) === -1 ) && ( match.indexOf( '__' ) === -1 ) ) {
           const fallbackNewComponentClassName = newComponentClassName.replace( /\$1(?![0-9])/g, '-' );
@@ -141,7 +149,29 @@ function renameComponent( verboseMode: boolean ) {
 
         return newComponentClassName;
       },
-      newComponentConstantName,
+      // 4:
+      ( match ) => {
+        /*
+          If there is no leading underscore, the first capture group for existingComponentConstantNameRegex won’t be filled.
+          This catches that and makes sure the unmatched $1 doesn’t show up in the replacement string.
+        */
+        if ( match.indexOf( '_' ) !== 0 ) {
+          const fallbackNewComponentConstantName = newComponentConstantName.replace( /^\$1(?![0-9])/, '' );
+          const alternativeNewComponentConstantName = newComponentConstantName.replace( /^\$1(?![0-9])/, '_' );
+
+          replacementWarnings.add(
+            `Encountered matching Constant-case string “${match}” that has a nondeterministic template variable mapping:`
+            + ` could be #COMPONENT# or #COMPONENT_BARE#.`
+            + ` As a result, #COMPONENT_BARE# has been chosen as a fallback.`
+            + ` If this is not what you want, please manually replace references to “${fallbackNewComponentConstantName}” with “${alternativeNewComponentConstantName}”.`,
+          );
+
+          return fallbackNewComponentConstantName;
+        }
+
+        return newComponentConstantName;
+      },
+      // 5:
       newComponentConstantShortName,
     ],
     "allowEmptyPaths": true,
