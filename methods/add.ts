@@ -2,14 +2,11 @@ import * as fs from 'fs';
 import { replaceInFile as replace } from 'replace-in-file';
 import path = require( 'path' );
 import mkdirp = require( 'mkdirp' );
-import { ncp } from 'ncp';
+import copy from 'recursive-copy';
 
 import { ReplaceOptions } from '../interfaces';
 import { templateDirectory, componentDirectory, getFileGlobs } from '../settings';
 import { slugify, componentCase, constantCase } from '../strings';
-
-// @ts-ignore Missing in declaration file
-ncp.limit = 16;
 
 function addComponent(
   componentName: string,
@@ -138,7 +135,7 @@ function addComponent(
       ( result ) => new Promise( ( resolve, reject ) => {
         if ( !targetDirectoryExists ) {
           mkdirp.sync( targetDirectory );
-          ncp(
+          copy(
             // Source
             `${templateDirectory}/#Component#`,
 
@@ -147,9 +144,8 @@ function addComponent(
 
             // Options
             {
-              "clobber": false,
-              // @ts-ignore Missing in declaration file
-              "rename": function rename( target: string ) {
+              "overwrite": false,
+              "rename": function rename( target ) {
                 const pathInfo = path.parse( target );
                 let filename = pathInfo.base;
 
@@ -160,20 +156,13 @@ function addComponent(
                   filename = filename.replace( from, to );
                 }
 
-                const resolution = path.resolve( targetDirectory, filename );
+                const resolution = `${pathInfo.dir}/${filename}`;
 
                 return resolution;
               },
             },
-
-            // Callback
-            ( ncpError: string ) => {
-              if ( ncpError ) {
-                // rimraf.sync( targetDirectory );
-                console.error( `ncp failed:` );
-                reject( ncpError );
-              }
-
+          )
+            .then( () => {
               const successMessage = `Component created: ${isSubcomponent || hasSubcomponent ? subcomponentFullName : componentName} @ ${targetDirectory}/`;
 
               replace( replaceOptions )
@@ -191,8 +180,14 @@ function addComponent(
                   console.error( `replace-in-file failed:` );
                   reject( replacementError );
                 } );
-            }, // ncp callback
-          ); // ncp
+            } ) // recursive-copy callback
+            .catch( ( recursiveCopyError: string ) => {
+              if ( recursiveCopyError ) {
+                // rimraf.sync( targetDirectory );
+                console.error( `recursive-copy failed:` );
+                reject( recursiveCopyError );
+              }
+            } ); // recursive-copy
         } else {
           resolve( result );
         }

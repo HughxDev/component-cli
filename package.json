@@ -17,14 +17,13 @@
   "dependencies": {
     "change-case": "^4.1.2",
     "mkdirp": "^1.0.4",
-    "ncp": "^2.0.0",
+    "recursive-copy": "^2.0.13",
     "replace-in-file": "^6.2.0",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
     "@hughx/tsconfig": "^0.0.11",
     "@types/mkdirp": "^1.0.2",
-    "@types/ncp": "^2.0.5",
     "@types/node": "^16.4.0",
     "@types/rimraf": "^3.0.1",
     "@typescript-eslint/eslint-plugin": "^4.29.0",

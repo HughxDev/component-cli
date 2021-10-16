@@ -135,13 +135,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/ncp@^2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@types/ncp/-/ncp-2.0.5.tgz#5c53b229a321946102a188b603306162137f4fb9"
-  integrity sha512-ocK0p8JuFmX7UkMabFPjY0F7apPvQyLWt5qtdvuvQEBz9i4m2dbzV+6L1zNaUp042RfnL6pHnxDE53OH6XQ9VQ==
-  dependencies:
-    "@types/node" "*"
-
 "@types/node@*", "@types/node@^16.4.0":
   version "16.4.13"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.4.13.tgz#7dfd9c14661edc65cccd43a29eb454174642370d"
@@ -1885,11 +1878,6 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-ncp@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/ncp/-/ncp-2.0.0.tgz#195a21d6c46e361d2fb1281ba38b91e9df7bdbb3"
-  integrity sha1-GVoh1sRuNh0vsSgbo4uR6d9727M=
-
 neo-async@^2.6.0:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
@@ -2311,7 +2299,7 @@ read-pkg@^3.0.0:
     normalize-package-data "^2.3.2"
     path-type "^3.0.0"
 
-recursive-copy@^2.0.10:
+recursive-copy@^2.0.10, recursive-copy@^2.0.13:
   version "2.0.13"
   resolved "https://registry.yarnpkg.com/recursive-copy/-/recursive-copy-2.0.13.tgz#ace471459650f379d4127dd64aa2a4ceca808aa2"
   integrity sha512-BjmE6R/dOImStEku+017L3Z0I6u/lA+SVr1sySWbTLjmQKDTESNmJ9WBZP8wbN5FuvqNvSYvRKA/IKQhAjqnpQ==
