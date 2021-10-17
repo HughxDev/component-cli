@@ -1,6 +1,6 @@
 {
   "name": "@hughx/component-cli",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Perform CRUD operations on components. Framework-agnostic.",
   "main": "component-cli.js",
   "types": "component-cli.d.ts",
@@ -47,12 +47,12 @@
     "compile": "tsc --declaration component-cli.ts",
     "component": "ts-node component-cli.ts",
     "clean:artifacts": "rm *.js; rm *.d.ts; rm methods/*.js; rm methods/*.d.ts",
-    "clean:build": "yarn clean:artifacts && rm -rf dist",
+    "clean:build": "yarn clean:artifacts; rm -rf dist",
     "clean:cmp": "rm -rf src/components/*",
     "clean": "yarn clean:cmp && yarn clean:build",
-    "build": "yarn clean:build && yarn compile && npm-minify && yarn clean:artifacts",
-    "build:patch": "yarn clean:build && yarn compile && yarn version --patch && npm-minify && yarn clean:artifacts",
-    "build:minor": "yarn clean:build && yarn compile && yarn version --minor && npm-minify && yarn clean:artifacts",
-    "build:major": "yarn clean:build && yarn compile && yarn version --major && npm-minify && yarn clean:artifacts"
+    "build": "yarn clean:build; yarn compile && npm-minify && yarn clean:artifacts",
+    "build:patch": "yarn clean:build; yarn compile && yarn version --patch && npm-minify && yarn clean:artifacts",
+    "build:minor": "yarn clean:build; yarn compile && yarn version --minor && npm-minify && yarn clean:artifacts",
+    "build:major": "yarn clean:build; yarn compile && yarn version --major && npm-minify && yarn clean:artifacts"
   }
 }
