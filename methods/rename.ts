@@ -129,6 +129,12 @@ function renameComponent( verboseMode: boolean ) {
       newComponentShortName,
       // 3:
       ( match ) => {
+        if ( verboseMode ) {
+          console.log( `\n---` );
+          console.log( `\nclass rename: ${existingClassNameRegex} → ${newComponentClassName} (default) or fallback` );
+          console.log( `\nmatch`, match );
+        }
+
         /*
           If there is no dash or underscore, the first capture group for existingClassNameRegex won’t be filled.
           This catches that and makes sure the unmatched $1 doesn’t show up in the replacement string.
@@ -136,6 +142,11 @@ function renameComponent( verboseMode: boolean ) {
         if ( ( match.indexOf( '-' ) === -1 ) && ( match.indexOf( '__' ) === -1 ) ) {
           const fallbackNewComponentClassName = newComponentClassName.replace( /\$1(?![0-9])/g, '-' );
           const alternativeNewComponentClassName = newComponentClassName.replace( /\$1(?![0-9])/g, '__' );
+
+          if ( verboseMode ) {
+            console.log( `❌ \`match\` had neither a hypen nor a double underscore; doing fallback replacement to ${fallbackNewComponentClassName}.` );
+            console.log( `fallbackNewComponentClassName`, fallbackNewComponentClassName, `\n` );
+          }
 
           replacementWarnings.add(
             `Encountered matching BEM-case string “${match}” that has a nondeterministic template variable mapping:`
@@ -146,8 +157,14 @@ function renameComponent( verboseMode: boolean ) {
 
           return fallbackNewComponentClassName;
         }
+        
+        const defaultReplacement = match.replace( existingClassNameRegex, newComponentClassName );
 
-        return newComponentClassName;
+        if ( verboseMode ) {
+          console.log( `✅ match had either a hyphen or a double underscore; doing default replacement to ${defaultReplacement}.` );
+        }
+
+        return defaultReplacement;
       },
       // 4:
       ( match ) => {
