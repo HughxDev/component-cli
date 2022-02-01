@@ -11,7 +11,7 @@ import { slugify, componentCase, constantCase } from '../strings';
 // @ts-ignore Missing in declaration file
 ncp.limit = 16;
 
-function addComponent(
+async function addComponent(
   componentName: string,
   subcomponentName: string = '',
   recursionLevel: number = 1,

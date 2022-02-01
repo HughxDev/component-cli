@@ -15,6 +15,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@types/jest": "^27.4.0",
     "change-case": "^4.1.2",
     "mkdirp": "^1.0.4",
     "ncp": "^2.0.0",
@@ -22,6 +23,9 @@
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.12",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
     "@hughx/tsconfig": "latest",
     "@types/mkdirp": "^1.0.2",
     "@types/ncp": "^2.0.5",
@@ -36,6 +40,8 @@
     "eslint-config-hughx-ts": "latest",
     "eslint-import-resolver-typescript": "latest",
     "eslint-plugin-import": "latest",
+    "jest": "^27.4.7",
+    "memfs": "^3.4.1",
     "npm-minify": "latest",
     "prettier": "latest",
     "prettier-eslint-cli": "latest",
@@ -53,6 +59,7 @@
     "build": "yarn clean:build; yarn compile && npm-minify && yarn clean:artifacts",
     "build:patch": "yarn clean:build; yarn compile && yarn version --patch && npm-minify && yarn clean:artifacts",
     "build:minor": "yarn clean:build; yarn compile && yarn version --minor && npm-minify && yarn clean:artifacts",
-    "build:major": "yarn clean:build; yarn compile && yarn version --major && npm-minify && yarn clean:artifacts"
+    "build:major": "yarn clean:build; yarn compile && yarn version --major && npm-minify && yarn clean:artifacts",
+    "test": "jest"
   }
 }
