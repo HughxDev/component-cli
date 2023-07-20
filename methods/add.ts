@@ -8,16 +8,24 @@ import { ReplaceOptions } from '../interfaces';
 import { getFileGlobs, getConfig } from '../settings';
 import { slugify, componentCase, constantCase } from '../strings';
 
-const { componentDirectory, templateDirectory } = getConfig();
-
 // @ts-ignore Missing in declaration file
 ncp.limit = 16;
 
-async function addComponent(
-  componentName: string,
-  subcomponentName: string = '',
-  recursionLevel: number = 1,
-): Promise<void | string | boolean> {
+export interface AddComponentParams {
+  componentName: string;
+  subcomponentName?: string
+  recursionLevel?: number;
+  verboseMode?: boolean;
+}
+
+async function addComponent( {
+  componentName,
+  subcomponentName = '',
+  recursionLevel = 1,
+  verboseMode = false,
+}: AddComponentParams ): Promise<void | string | boolean> {
+  const { componentDirectory, templateDirectory } = getConfig( verboseMode );
+
   let subcomponentBareName: string;
   let subcomponentFullName: string;
 
@@ -74,6 +82,7 @@ async function addComponent(
       /(\\?[#$])component\1/g, // #component# → widget, widget__subwidget
       /(\\?[#$])component:block\1/g, // #component:block# → widget, widget-subwidget
     ],
+    // @ts-ignore - Init
     "to": undefined,
     "allowEmptyPaths": true,
   };
@@ -125,16 +134,17 @@ async function addComponent(
 
   return Promise.resolve()
     .then( () => {
-      // eslint-disable-line consistent-return
       if ( targetDirectoryExists && recursionLevel === 1 ) {
         if ( hasSubcomponent ) {
-          return addComponent( componentName, subcomponentName, 2 );
+          return addComponent( {
+            componentName,
+            subcomponentName,
+            "recursionLevel": 2,
+          } );
         }
 
         throw new Error( `Component already exists: ${componentName} @ ${targetDirectory}/` );
       }
-
-      return null;
     } )
     .then(
       ( result ) => new Promise( ( resolve, reject ) => {
@@ -181,7 +191,11 @@ async function addComponent(
               replaceInFile( replaceOptions )
                 .then( () => {
                   if ( hasSubcomponent ) {
-                    return addComponent( componentName, subcomponentName, 2 );
+                    return addComponent( {
+                      componentName,
+                      subcomponentName,
+                      "recursionLevel": 2,
+                    } );
                   }
 
                   return true;

@@ -50,7 +50,7 @@
     "typescript": "latest"
   },
   "scripts": {
-    "compile": "tsc --declaration component-cli.ts",
+    "compile": "tsc --declaration --resolveJsonModule component-cli.ts",
     "component": "ts-node component-cli.ts",
     "clean:artifacts": "rm *.js; rm *.d.ts; rm methods/*.js; rm methods/*.d.ts",
     "clean:build": "yarn clean:artifacts; rm -rf dist",

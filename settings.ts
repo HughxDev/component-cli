@@ -26,7 +26,7 @@ export function getConfig( verbose: boolean = false ) {
   let userConfig = {};
 
   try {
-    userConfig = require( `${process.cwd()}/.component-cli.js` );
+    userConfig = require( `${process.cwd()}/.component-cli.js` ).config;
 
     if ( verbose ) {
       console.log( `Project-level config found @ ${process.cwd()}/.component-cli.js:` );

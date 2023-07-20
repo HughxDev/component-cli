@@ -6,15 +6,15 @@ import addComponent from './add';
 import { getConfig, getFileGlobs } from '../settings';
 import { slugify, componentCase, constantCase } from '../strings';
 
-const { componentDirectory } = getConfig();
-
 function renameComponent( verboseMode: boolean ) {
+  const { componentDirectory } = getConfig( verboseMode );
+
   const existingComponentId: string = process.argv.slice( 3 )[0];
   const newComponentId: string = process.argv.slice( 4 )[0];
 
   let existingBlockComponentName: string;
   let existingElementComponentShortName: string;
-  let existingElementComponentName: string;
+  let existingElementComponentName: string | undefined;
 
   let existingComponentNameRegex: RegExp;
   let existingComponentShortNameRegex: RegExp;
@@ -24,7 +24,7 @@ function renameComponent( verboseMode: boolean ) {
 
   let newBlockComponentName: string;
   let newElementComponentShortName: string;
-  let newElementComponentName: string;
+  let newElementComponentName: string | undefined;
 
   let newComponentShortName: string;
   let newComponentClassName: string;
@@ -206,7 +206,7 @@ function renameComponent( verboseMode: boolean ) {
   return replaceInFile( replaceOptions )
     .then( () => {
       if ( !fs.existsSync( targetDirectoryBase ) && isSubcomponent ) {
-        return addComponent( newBlockComponentName );
+        return addComponent( { "componentName": newBlockComponentName } );
       }
 
       return true;

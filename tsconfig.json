@@ -1,3 +1,6 @@
 {
-  "extends": "@hughx/tsconfig/node.json"
+  "extends": "@hughx/tsconfig/node.json",
+  "compilerOptions": {
+    "resolveJsonModule": true
+  }
 }

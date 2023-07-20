@@ -3,9 +3,9 @@ import rimraf = require( 'rimraf' );
 import { componentCase } from '../strings';
 import { getConfig } from '../settings';
 
-const { componentDirectory } = getConfig();
+function removeComponent( verboseMode: boolean = false ) {
+  const { componentDirectory } = getConfig( verboseMode );
 
-function removeComponent() {
   const componentId = process.argv.slice( 3 )[0];
   let componentName;
   let subcomponentFullName;
