@@ -5,8 +5,10 @@ import mkdirp = require( 'mkdirp' );
 import { ncp } from 'ncp';
 
 import { ReplaceOptions } from '../interfaces';
-import { templateDirectory, componentDirectory, getFileGlobs } from '../settings';
+import { getFileGlobs, getConfig } from '../settings';
 import { slugify, componentCase, constantCase } from '../strings';
+
+const { componentDirectory, templateDirectory } = getConfig();
 
 // @ts-ignore Missing in declaration file
 ncp.limit = 16;

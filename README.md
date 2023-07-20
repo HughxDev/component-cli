@@ -24,13 +24,13 @@ Global:
 yarn global add @hughx/component-cli
 ```
 
-Then, in your project directory:
+Then, in your project directory, create your component directory:
 
 ```shell
 mkdir -p _templates/components/#Component#/
 ```
 
-Currently the script outputs to `src/components`, so you’ll need to also create that directory if it doesn’t already exist. A future version may make this path configurable.
+The script outputs to `src/components` by default, so you’ll need to also create that directory if it doesn’t already exist. Both paths are configurable—see “[Config Files](#config-files)”.
 
 ## Usage
 
@@ -102,6 +102,17 @@ The BEM variations can also have their delimiters escaped with a single backslas
 | `#component:block#` | BEM Case, subcomponent as new block                   | <samp><code>widget</code></samp>, <samp><code>widget-subwidget</code></samp>  |
 
 </dl>
+
+## Config Files
+
+You can add a `.component-cli.js` file to the root of your project to override default behavior. It takes the following form. Paths should be relative to the working directory in which you are calling `component-cli`, usually the project root.
+
+```js
+export const config = {
+  "templateDirectory": "_templates/components",
+  "componentDirectory": "src/components"
+};
+```
 
 ## API
 

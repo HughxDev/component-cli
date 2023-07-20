@@ -1,6 +1,6 @@
 {
   "name": "@hughx/component-cli",
-  "version": "0.2.7",
+  "version": "0.2.9",
   "description": "Perform CRUD operations on components. Framework-agnostic.",
   "main": "component-cli.js",
   "types": "component-cli.d.ts",

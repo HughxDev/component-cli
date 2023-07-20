@@ -4,3 +4,4 @@ src/
 *.js
 *.d.ts
 yarn-error.log
+.DS_Store

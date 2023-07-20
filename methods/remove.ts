@@ -1,7 +1,9 @@
 import rimraf = require( 'rimraf' );
 
-import { componentDirectory } from '../settings';
 import { componentCase } from '../strings';
+import { getConfig } from '../settings';
+
+const { componentDirectory } = getConfig();
 
 function removeComponent() {
   const componentId = process.argv.slice( 3 )[0];
