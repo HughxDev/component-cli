@@ -19,17 +19,18 @@ export function getFileGlobs( directory: string = '.' ): Array<string> {
 }
 
 export function getConfig( verbose: boolean = false ) {
-  let config = {
+  const defaultConfig = {
     "templateDirectory": defaultTemplateDirectory,
     "componentDirectory": defaultComponentDirectory,
   };
+  let userConfig = {};
 
   try {
-    config = require( `${process.cwd()}/.component-cli.js` );
+    userConfig = require( `${process.cwd()}/.component-cli.js` );
 
     if ( verbose ) {
       console.log( `Project-level config found @ ${process.cwd()}/.component-cli.js:` );
-      console.log( `${JSON.stringify( config, null, 2 )}\n` );
+      console.log( `${JSON.stringify( userConfig, null, 2 )}\n` );
     }
   } catch ( missingConfigError ) {
     if ( verbose ) {
@@ -37,5 +38,8 @@ export function getConfig( verbose: boolean = false ) {
     }
   }
 
-  return config;
+  return {
+    ...defaultConfig,
+    ...userConfig,
+  };
 }
