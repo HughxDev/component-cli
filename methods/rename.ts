@@ -3,8 +3,10 @@ import { replaceInFile, ReplaceInFileConfig } from 'replace-in-file';
 import path = require( 'path' );
 
 import addComponent from './add';
-import { componentDirectory, getFileGlobs } from '../settings';
+import { getConfig, getFileGlobs } from '../settings';
 import { slugify, componentCase, constantCase } from '../strings';
+
+const { componentDirectory } = getConfig();
 
 function renameComponent( verboseMode: boolean ) {
   const existingComponentId: string = process.argv.slice( 3 )[0];
